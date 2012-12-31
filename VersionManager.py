@@ -1,89 +1,89 @@
 import sys
+import re
 import xml.etree.ElementTree as ET
+from distutils.version import StrictVersion
 
-class PluginManager:
-
-    plugins = [
-            { "name":"script.common.plugin.cache", "url":"http://hg.tobiasussing.dk/hgweb.cgi/cachexbmc/"},
-            { "name":"script.module.simple.downloader", "url":"http://hg.tobiasussing.dk/hgweb.cgi/downloadxbmc"},
-            { "name":"script.module.parsedom", "url":"http://hg.tobiasussing.dk/hgweb.cgi/commonxbmc/"},
-            { "name":"plugin.video.youtube", "url":"http://hg.tobiasussing.dk/hgweb.cgi/youtubexbmc/"},
-            { "name":"plugin.video.vimeo", "url":"http://hg.tobiasussing.dk/hgweb.cgi/vimeoxbmc/"},
-            { "name":"plugin.video.bliptv", "url":"http://hg.tobiasussing.dk/hgweb.cgi/bliptvxbmc/"}
-          ]
-
-    branches = ["eden", "default"]
-    branch_versions = {"eden":"1", "frodo":"2"}
-
-    updates = []
+class VersionManager:
 
     def __init__(self):
         self.filesystem = sys.modules["__main__"].filesystem
-        self.repository = sys.modules["__main__"].repository
 
-    def setupWorkingFolders(self):
-        self.filesystem.deleteWorkingFolderRecursively()
-        self.filesystem.createWorkingFolderStructure(self.branches)
+    def parseVersionNumber(self, version_string):
+        version = []
+        for v in version_string.split("."):
+            version.append(int(v))
+        return version
 
-    def clonePluginFromRepositoryBranchesToWorkingFolders(self, plugin):
-        for branch in self.branches:
-            self.repository.cloneBranch(plugin, branch)
+    def getVersionNumberAsString(self, version):
+        return ".".join(map(str, version))
 
-    def extractVersionInformationFromBranches(self, plugin):
-        for branch in self.branches:
+    def extractVersionInformationFromBranches(self, plugin, branches):
+        for branch in branches:
             version_string = "0.0.0"
             file = self.filesystem.readAddonXml(plugin, branch)
             if len(file) > 0:
                 xml = ET.fromstring(file)
                 version_string = xml.attrib['version']
-            version = version_string.split(".")
 
             plugin[ branch + "_version"] = version_string
 
-    def getPluginBranchesWhichNeedToBeUpdated(self):
-        result = []
+    def getNewVersionNumberForBranch(self, update, branch_versions):
+        main_version = self.parseVersionNumber(update["plugin"]["default_version"])
+        new_version = main_version[:]
 
-        for plugin in self.plugins:
-            for branch in self.branches:
-                if plugin[branch + "_version"] != plugin["default_version"] and branch != "default":
-                    result.append( (plugin, branch) )
+        if branch_versions.has_key(update["branch"]):
+            new_version[0] = new_version[0] + branch_versions[update["branch"]]
 
-        return result
+        if  update.has_key("reason") and update["reason"] == "dependency updated":
+            branch_versions = update["plugin"][update["branch"] + "_version"]
+            default_version = update["plugin"]["default_version"]
 
-    def updateReleaseBranches(self):
+            if StrictVersion(branch_versions) > StrictVersion(default_version):
+                new_version = self.parseVersionNumber(branch_versions)
 
-        for (plugin, branch) in self.updates:
-            # clean each plugin subdir in each branch subdir
-            self.filesystem.cleanReleaseBranch(plugin, branch)
-            self.filesystem.copyPluginToReleaseBranch(plugin, branch)
-            self.filesystem.UpdateVersionAndNames(plugin, branch)
-            # copy contents of plugin subdir from main branch to release branch
+            new_version[len(new_version) -1] += 1
 
-        pass
+        update["plugin"]["new_"+ update["branch"] + "_version"] = self.getVersionNumberAsString(new_version)
 
-    def packageNewPluginVersionsAsZipFiles(self, updates):
-        pass
+    def UpdateVersionAndNames(self, update, branch_versions):
+        self.getNewVersionNumberForBranch(update, branch_versions)
+        self.replaceVersionNumberInAllPythonFiles(update)
+        self.replaceBetaTagInAllPluginFiles(update)
+        self.filesystem.cleanCompiledOutputFromReleaseBranch(update)
 
-    def updatePluginsAsNecessary(self):
-        self.setupWorkingFolders()
+    def replaceVersionNumberInAllPythonFiles(self, update):
+        files = self.filesystem.getAllPluginPythonFiles(update)
+        for file in files:
+            print "replacing version number in python file: " + file
+            content = self.filesystem.readFileFromDisk(file)
+            content = self.replaceVersionNumberInPythonFile(content, update)
+            self.filesystem.saveFileToDisk(file, content)
 
-        for plugin in self.plugins:
-            self.clonePluginFromRepositoryBranchesToWorkingFolders(plugin)
+    def replaceVersionNumberInPythonFile(self, content, update):
+        old_version = update["plugin"]["default_version"]
+        new_version = update["plugin"]["new_" + update["branch"] + "_version"]
+        content = content.replace(old_version, new_version)
 
-            self.extractVersionInformationFromBranches(plugin)
+        versions = re.findall(r'version\s*=\s*\D+([\d.][\d.][\d.]+\d+?)', content)
+        if len(versions) > 0:
+            print "greedy search found several version declarations in that will be replaced: "
+            print repr(versions)
 
-        self.updates = self.getPluginBranchesWhichNeedToBeUpdated()
+        for version in versions:
+            content = content.replace(version, new_version)
 
-        self.updateReleaseBranches()
-        self.packageNewPluginVersionsAsZipFiles(self.updates)
+        return content
 
-        #for each plugin
-            # clone main branch of plugin to subdir in trunk
-            # get the current version in release and save it
-            # clone each release branch of plugin to subdir in branch subdir
-            # get the current version in each branch and save it
-            # if a branch is out of date (a new version is ready) save that status
+    def replaceBetaTagInAllPluginFiles(self, update):
+        files = self.filesystem.getAllPluginFiles(update)
+        for file in files:
+            print "replacing beta tag in file: " + file
+            content = self.filesystem.readFileFromDisk(file)
+            content = self.replaceBetaTagInFile(content)
+            self.filesystem.saveFileToDisk(file, content)
 
-    def emailUpdatesToMaintainers(self):
-        for plugin_update in self.updates:
-            print repr(plugin_update)
+    def replaceBetaTagInFile(self, content):
+        content = content.replace(".beta", "")
+        content = content.replace(" Beta", "")
+        return content
+
