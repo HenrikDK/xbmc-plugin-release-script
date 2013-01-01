@@ -20,6 +20,9 @@ class AddonXMLUpdater():
 
     def UpdateVersionNumberAndDependencyInformationInAddonXml(self, update):
         file = "tmp/" + update["branch"] + "/" + update["plugin"]["name"] + "/Addon.xml"
+        if update["branch"] == "default":
+            file = file.replace("/Addon.xml","/plugin/Addon.xml")
+
         print "updating addon manifest xml: " + file
         content = self.filesystem.readFileFromDisk(file)
 
@@ -37,7 +40,7 @@ class AddonXMLUpdater():
 
     def UpdateDependencyVersion(self, branch, imports, update):
         for dependency in imports:
-            if (dependency.attrib["addon"] == update["name"]):
+            if (dependency.attrib["addon"].replace(".beta","") == update["name"]):
                 if (update.has_key("new_version")):
                     dependency.attrib["version"] = update["new_version"]
                 elif (update.has_key("new_" + branch + "_version")):
