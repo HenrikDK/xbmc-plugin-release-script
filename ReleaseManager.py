@@ -26,27 +26,36 @@ class ReleaseManager:
         self.template = sys.modules["__main__"].template
 
     def updatePluginsAsNecessary(self):
-        self.setupWorkingFolders()
+        self.SetupWorkingFolders()
 
         for plugin in self.plugins:
-            self.clonePluginFromRepositoryBranchesToWorkingFolders(plugin)
+            self.ClonePluginFromRepositoryBranchesToWorkingFolders(plugin)
             self.pluginmanager.extractPluginInformationFromBranches(plugin, self.branches)
 
         self.updates = self.pluginmanager.getPluginBranchesWhichNeedToBeUpdated(self.plugins, self.branches)
 
-        self.updatePluginReleaseBranches()
-        self.packageNewPluginVersionsAsZipFiles(self.updates)
+        self.UpdatePluginReleaseBranches()
+        self.PackageNewPluginVersionsAsZipFiles(self.updates)
         self.template.createEmailFromTemplate(self.updates)
 
-    def setupWorkingFolders(self):
+    def SetupWorkingFolders(self):
         self.filesystem.deleteWorkingFolderRecursively()
         self.filesystem.createWorkingFolderStructure(self.branches)
 
-    def clonePluginFromRepositoryBranchesToWorkingFolders(self, plugin):
+    def ClonePluginFromRepositoryBranchesToWorkingFolders(self, plugin):
         for branch in self.branches:
             self.repository.cloneBranch(plugin, branch)
 
-    def updatePluginReleaseBranches(self):
+    def UpdateMainBranch(self):
+        updated = []
+        for update in self.updates:
+            if update["plugin"]["name"] not in updated:
+                updated.append(update["plugin"]["name"])
+                main_branch_update = {"plugin": update["plugin"], "branch": "default"}
+                self.pluginmanager.updateMainPluginXML(main_branch_update)
+                self.repository.updateBranch(main_branch_update)
+
+    def UpdatePluginReleaseBranches(self):
 
         for update in self.updates:
             print "\n"
@@ -57,8 +66,9 @@ class ReleaseManager:
             self.filesystem.copyPluginToReleaseBranch(update)
 
             self.pluginmanager.updatePlugin(update, self.branch_versions, self.plugins, self.xbmc_imports)
-
             self.repository.updateBranch(update)
 
-    def packageNewPluginVersionsAsZipFiles(self, updates):
+        self.UpdateMainBranch()
+
+    def PackageNewPluginVersionsAsZipFiles(self, updates):
         pass
