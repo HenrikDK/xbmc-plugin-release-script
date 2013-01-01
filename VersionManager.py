@@ -43,6 +43,9 @@ class VersionManager:
 
             new_version[len(new_version) -1] += 1
 
+        if not branch_versions.has_key(update["branch"]):
+            update["plugin"]["new_default_version"] = self.getVersionNumberAsString(new_version)
+
         update["plugin"]["new_"+ update["branch"] + "_version"] = self.getVersionNumberAsString(new_version)
 
     def UpdateVersionAndNames(self, update, branch_versions):
