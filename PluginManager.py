@@ -47,3 +47,6 @@ class PluginManager:
         self.versionmanager.UpdateVersionAndNames(update, branch_versions)
         self.dependencymanager.UpdateDependencies(update, branch_versions, plugins, xbmc_imports)
         self.addonxmlupdater.UpdateVersionNumberAndDependencyInformationInAddonXml(update)
+
+    def updateMainPluginXML(self, update):
+        self.addonxmlupdater.UpdateVersionNumberAndDependencyInformationInAddonXml(update)
