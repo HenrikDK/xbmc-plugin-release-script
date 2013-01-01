@@ -40,10 +40,13 @@ class FileSystem():
         print "cleaning branch folder: " + folderPath
         for root, dirs, files in os.walk(folderPath):
             for f in files:
-                os.unlink(os.path.join(root, f))
+                file_path = os.path.join(root, f)
+                if file_path.rfind(".hg") < 0:
+                    os.unlink(os.path.join(root, f))
             for d in dirs:
-                if d != ".hg":
-                    shutil.rmtree(os.path.join(root, d))
+                full_path = os.path.join(root, d)
+                if full_path.rfind(".hg") < 0:
+                    shutil.rmtree(full_path)
 
     def cleanCompiledOutputFromReleaseBranch(self, update):
         folderPath = "tmp/" + update["branch"] + "/" + update["plugin"]["name"] + "/"
@@ -66,8 +69,11 @@ class FileSystem():
         branch_folder = "tmp/" + update["branch"] + "/" + update["plugin"]["name"] + "/"
         for folder_name, dirs, files in os.walk(branch_folder):
             for file_name in files:
+                full_path = os.path.join(folder_name,file_name)
+                if full_path.find(".hg") >= 0:
+                    continue
                 if file_name.rfind(".xml") > 0 or file_name.rfind(".py") > 0:
-                    python_files.append(os.path.join(folder_name,file_name))
+                    python_files.append(full_path)
 
         return python_files
 
@@ -76,7 +82,10 @@ class FileSystem():
         branch_folder = "tmp/" + update["branch"] + "/" + update["plugin"]["name"] + "/"
         for folder_name, dirs, files in os.walk(branch_folder):
             for file_name in files:
+                full_path = os.path.join(folder_name,file_name)
+                if full_path.find(".hg") >= 0:
+                    continue
                 if file_name.rfind(".py") > 0:
-                    python_files.append(os.path.join(folder_name,file_name))
+                    python_files.append(full_path)
 
         return python_files
