@@ -3,12 +3,12 @@ import sys
 class ReleaseManager:
 
     plugins = [
-            #{ "name":"script.common.plugin.cache", "url":"http://hg.tobiasussing.dk/hgweb.cgi/cachexbmc/"},
-            #{ "name":"script.module.simple.downloader", "url":"http://hg.tobiasussing.dk/hgweb.cgi/downloadxbmc"},
-            #{ "name":"script.module.parsedom", "url":"http://hg.tobiasussing.dk/hgweb.cgi/commonxbmc/"},
+            { "name":"script.common.plugin.cache", "url":"https://github.com/HenrikDK/xbmc-common-cache.git"},
+            { "name":"script.module.simple.downloader", "url":"https://github.com/HenrikDK/xbmc-simple-downloader.git"},
+            { "name":"script.module.parsedom", "url":"https://github.com/HenrikDK/xbmc-common-plugin-functions.git"},
             { "name":"plugin.video.youtube", "url":"https://github.com/HenrikDK/youtube-xbmc-plugin.git"},
-            #{ "name":"plugin.video.vimeo", "url":"https://github.com/HenrikDK/vimeo-xbmc-plugin.git"},
-            #{ "name":"plugin.video.bliptv", "url":"http://hg.tobiasussing.dk/hgweb.cgi/bliptvxbmc/"}
+            { "name":"plugin.video.vimeo", "url":"https://github.com/HenrikDK/vimeo-xbmc-plugin.git"},
+            { "name":"plugin.video.bliptv", "url":"https://github.com/HenrikDK/bliptv-xbmc-plugin.git"}
           ]
 
     xbmc_imports = [{"name":"xbmc.python", "eden_version": "2.0", "frodo_version":"2.1.0"}]
