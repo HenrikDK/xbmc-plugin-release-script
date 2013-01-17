@@ -19,7 +19,7 @@ class AddonXMLUpdater():
         return content
 
     def UpdateVersionNumberAndDependencyInformationInAddonXml(self, update):
-        file = "tmp/" + update["branch"] + "/" + update["plugin"]["name"] + "/Addon.xml"
+        file = "../tmp/" + update["branch"] + "/" + update["plugin"]["name"] + "/Addon.xml"
         if update["branch"] == "master":
             file = file.replace("/Addon.xml","/plugin/Addon.xml")
 

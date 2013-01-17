@@ -13,6 +13,8 @@ class ReleaseManager:
 
     xbmc_imports = [{"name":"xbmc.python", "eden_version": "2.0", "frodo_version":"2.1.0"}]
 
+    repo_branch = "frodo"
+
     branches = ["frodo", "eden", "master"]
 
     branch_versions = {"frodo" : 1}
@@ -35,7 +37,7 @@ class ReleaseManager:
         self.updates = self.pluginmanager.getPluginBranchesWhichNeedToBeUpdated(self.plugins, self.branches)
 
         self.UpdatePluginReleaseBranches()
-        self.PackageNewPluginVersionsAsZipFiles(self.updates)
+        self.PackageNewPluginVersionsAsZipFiles()
         self.template.createEmailFromTemplate(self.updates)
 
     def SetupWorkingFolders(self):
@@ -70,5 +72,16 @@ class ReleaseManager:
 
         self.UpdateMainBranch()
 
-    def PackageNewPluginVersionsAsZipFiles(self, updates):
-        pass
+    def PackageNewPluginVersionsAsZipFiles(self):
+
+        for update in self.updates:
+
+            if update["branch"] != self.repo_branch:
+                continue
+
+            print "Zip'ing plugin: " + update["plugin"]["name"] + " - branch: " + update["branch"] + " for local repository"
+
+            self.filesystem.copyPluginUpdateToZipBranch(update)
+            self.filesystem.cleanPluginZipFolder(update)
+            self.filesystem.ZipPluginUpdate(update)
+            self.filesystem.copyPluginZipFileToLocalRepository(update)
