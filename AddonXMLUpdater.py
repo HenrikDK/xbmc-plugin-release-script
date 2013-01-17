@@ -20,7 +20,7 @@ class AddonXMLUpdater():
 
     def UpdateVersionNumberAndDependencyInformationInAddonXml(self, update):
         file = "tmp/" + update["branch"] + "/" + update["plugin"]["name"] + "/Addon.xml"
-        if update["branch"] == "default":
+        if update["branch"] == "master":
             file = file.replace("/Addon.xml","/plugin/Addon.xml")
 
         print "updating addon manifest xml: " + file

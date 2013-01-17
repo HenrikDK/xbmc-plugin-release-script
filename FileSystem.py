@@ -28,7 +28,7 @@ class FileSystem():
     def readAddonXml(self, plugin, branch):
         filePath = "addon.xml"
 
-        if branch == "default":
+        if branch == "master":
             filePath = "plugin/" + filePath
 
         filePath = "tmp/" + branch + "/" + plugin["name"] + "/" + filePath
@@ -58,7 +58,7 @@ class FileSystem():
                     os.unlink(os.path.join(root, f))
 
     def copyPluginToReleaseBranch(self, update):
-        source = "tmp/default/" + update["plugin"]["name"] + "/plugin/"
+        source = "tmp/master/" + update["plugin"]["name"] + "/plugin/"
         destination = "tmp/" + update["branch"] + "/" + update["plugin"]["name"] + "/"
 
         print "copying files from: " + source + " to: " + destination

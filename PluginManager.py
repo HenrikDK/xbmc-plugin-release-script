@@ -18,7 +18,7 @@ class PluginManager:
 
         for plugin in plugins:
             for branch in branches:
-                if branch != "default" and plugin[branch + "_version"] != plugin["default_version"]:
+                if branch != "master" and plugin[branch + "_version"] != plugin["master_version"]:
                     result.append( {"plugin": plugin, "branch": branch, "reason":"update available"} )
 
         possible_changes = []

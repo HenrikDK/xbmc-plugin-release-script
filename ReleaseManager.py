@@ -3,17 +3,17 @@ import sys
 class ReleaseManager:
 
     plugins = [
-            { "name":"script.common.plugin.cache", "url":"http://hg.tobiasussing.dk/hgweb.cgi/cachexbmc/"},
-            { "name":"script.module.simple.downloader", "url":"http://hg.tobiasussing.dk/hgweb.cgi/downloadxbmc"},
-            { "name":"script.module.parsedom", "url":"http://hg.tobiasussing.dk/hgweb.cgi/commonxbmc/"},
-            { "name":"plugin.video.youtube", "url":"http://hg.tobiasussing.dk/hgweb.cgi/youtubexbmc/"},
-            { "name":"plugin.video.vimeo", "url":"http://hg.tobiasussing.dk/hgweb.cgi/vimeoxbmc/"},
-            { "name":"plugin.video.bliptv", "url":"http://hg.tobiasussing.dk/hgweb.cgi/bliptvxbmc/"}
+            #{ "name":"script.common.plugin.cache", "url":"http://hg.tobiasussing.dk/hgweb.cgi/cachexbmc/"},
+            #{ "name":"script.module.simple.downloader", "url":"http://hg.tobiasussing.dk/hgweb.cgi/downloadxbmc"},
+            #{ "name":"script.module.parsedom", "url":"http://hg.tobiasussing.dk/hgweb.cgi/commonxbmc/"},
+            { "name":"plugin.video.youtube", "url":"https://github.com/HenrikDK/youtube-xbmc-plugin.git"},
+            #{ "name":"plugin.video.vimeo", "url":"https://github.com/HenrikDK/vimeo-xbmc-plugin.git"},
+            #{ "name":"plugin.video.bliptv", "url":"http://hg.tobiasussing.dk/hgweb.cgi/bliptvxbmc/"}
           ]
 
     xbmc_imports = [{"name":"xbmc.python", "eden_version": "2.0", "frodo_version":"2.1.0"}]
 
-    branches = ["frodo", "eden", "default"]
+    branches = ["frodo", "eden", "master"]
 
     branch_versions = {"frodo" : 1}
 
@@ -51,7 +51,7 @@ class ReleaseManager:
         for update in self.updates:
             if update["plugin"]["name"] not in updated:
                 updated.append(update["plugin"]["name"])
-                main_branch_update = {"plugin": update["plugin"], "branch": "default"}
+                main_branch_update = {"plugin": update["plugin"], "branch": "master"}
                 self.pluginmanager.updateMainPluginXML(main_branch_update)
                 self.repository.updateBranch(main_branch_update)
 

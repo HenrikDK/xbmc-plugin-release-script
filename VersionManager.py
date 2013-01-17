@@ -28,7 +28,7 @@ class VersionManager:
             plugin[ branch + "_version"] = version_string
 
     def getNewVersionNumberForBranch(self, update, branch_versions):
-        main_version = self.parseVersionNumber(update["plugin"]["default_version"])
+        main_version = self.parseVersionNumber(update["plugin"]["master_version"])
         new_version = main_version[:]
 
         if branch_versions.has_key(update["branch"]):
@@ -36,7 +36,7 @@ class VersionManager:
 
         if  update.has_key("reason") and update["reason"] == "dependency updated":
             branch_versions = update["plugin"][update["branch"] + "_version"]
-            default_version = update["plugin"]["default_version"]
+            default_version = update["plugin"]["master_version"]
 
             if StrictVersion(branch_versions) > StrictVersion(default_version):
                 new_version = self.parseVersionNumber(branch_versions)
@@ -44,7 +44,7 @@ class VersionManager:
             new_version[len(new_version) -1] += 1
 
         if not branch_versions.has_key(update["branch"]):
-            update["plugin"]["new_default_version"] = self.getVersionNumberAsString(new_version)
+            update["plugin"]["new_master_version"] = self.getVersionNumberAsString(new_version)
 
         update["plugin"]["new_"+ update["branch"] + "_version"] = self.getVersionNumberAsString(new_version)
 
@@ -63,7 +63,7 @@ class VersionManager:
             self.filesystem.saveFileToDisk(file, content)
 
     def replaceVersionNumberInPythonFile(self, content, update):
-        old_version = update["plugin"]["default_version"]
+        old_version = update["plugin"]["master_version"]
         new_version = update["plugin"]["new_" + update["branch"] + "_version"]
         content = content.replace(old_version, new_version)
 

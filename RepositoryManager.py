@@ -6,7 +6,7 @@ class RepositoryManager:
         source = plugin["url"]
         destination = "tmp/" + branch + "/" + plugin["name"]
 
-        command = "hg clone " + source + " " + destination + " -b " + branch
+        command = "git clone " + source + " " + destination + " -b " + branch
         print "cloning: " + source + " into: " + destination
         call(command, shell=True)
         print "destination contents: "
@@ -14,12 +14,15 @@ class RepositoryManager:
 
     def updateBranch(self, update):
         source = "tmp/" + update["branch"] + "/" + update["plugin"]["name"]
-        command = "cd " + source + '; hg add && hg commit -m "Jenkins commit" && hg push'
+        command = "cd " + source + '; git add . && git commit -m "Jenkins commit"'# && git push'
         call(command, shell=True)
 
     def getBranchUpdateDetails(self, update):
-        command = "hg id -r " + update["branch"] + " " + update["plugin"]["url"]
+        command = "git ls-remote " + update["plugin"]["url"] + " -b " + update["branch"]
         try:
-            update["revision"] = check_output(command, shell=True)
+            revision = check_output(command, shell=True)
+            if  revision.find(" ") > 0:
+                revision = revision[:revision.find(" ")]
+            update["revision"] = revision
         except :
             update["revision"] = "unable to find revision\r\n"
