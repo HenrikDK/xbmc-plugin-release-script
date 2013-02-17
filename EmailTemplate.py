@@ -32,4 +32,4 @@ class EmailTemplate:
 
         plugins = list(set(plugins))
 
-        return "[Hg Pull] " + " ".join(plugins)
+        return "[Git Pull] " + " ".join(plugins)
