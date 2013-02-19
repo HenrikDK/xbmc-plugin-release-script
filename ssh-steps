@@ -5,4 +5,4 @@ ssh-keygen -t rsa -C "my@email.com" -f id_rsa-github
 ssh -T git@github.com
 
 # Per Project
-echo git config remote.origin.url git@github.com:TobiasTheViking/xbmc-plugin-release-script
+echo git config remote.origin.url git@github.com:HenrikDK/xbmc-plugin-release-script
