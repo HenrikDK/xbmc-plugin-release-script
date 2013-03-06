@@ -27,6 +27,14 @@ class VersionManager:
 
             plugin[ branch + "_version"] = version_string
 
+    def extrapolateCurrentVersionsFromMasterBranchVersion(self, plugin, branches, branch_versions):
+        for branch in branches:
+            new_version = self.parseVersionNumber(plugin["master_version"])
+            if branch != "master":
+                if branch in branch_versions:
+                    new_version[0] = new_version[0] + branch_versions[branch]
+                plugin["master_" + branch + "_version"] = self.getVersionNumberAsString(new_version)
+
     def getNewVersionNumberForBranch(self, update, branch_versions):
         main_version = self.parseVersionNumber(update["plugin"]["master_version"])
         new_version = main_version[:]

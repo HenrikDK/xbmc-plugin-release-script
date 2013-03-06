@@ -8,8 +8,9 @@ class PluginManager:
         self.versionmanager = sys.modules["__main__"].versionmanager
         self.addonxmlupdater = sys.modules["__main__"].addonxmlupdater
 
-    def extractPluginInformationFromBranches(self, plugin, branches):
+    def extractPluginInformationFromBranches(self, plugin, branches, branch_versions):
         self.versionmanager.extractVersionInformationFromBranches(plugin, branches)
+        self.versionmanager.extrapolateCurrentVersionsFromMasterBranchVersion(plugin, branches, branch_versions)
         self.dependencymanager.extractDependencyInformationFromBranches(plugin, branches)
 
     def getPluginBranchesWhichNeedToBeUpdated(self, plugins, branches):
@@ -18,7 +19,8 @@ class PluginManager:
 
         for plugin in plugins:
             for branch in branches:
-                if branch != "master" and plugin[branch + "_version"] != plugin["master_version"]:
+                print repr(branch)  + " - " + repr(plugin)
+                if branch != "master" and plugin[branch + "_version"] != plugin["master_" + branch + "_version"]:
                     result.append( {"plugin": plugin, "branch": branch, "reason":"update available"} )
 
         possible_changes = []
