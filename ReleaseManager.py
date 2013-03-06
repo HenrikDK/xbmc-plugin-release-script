@@ -3,14 +3,14 @@ import sys
 class ReleaseManager:
 
     plugins = [
-            { "name":"script.common.plugin.cache", "url":"https://github.com/HenrikDK/xbmc-common-cache.git"},
-            { "name":"script.module.simple.downloader", "url":"https://github.com/HenrikDK/xbmc-simple-downloader.git"},
-            { "name":"script.module.parsedom", "url":"https://github.com/HenrikDK/xbmc-common-plugin-functions.git"},
-            { "name":"plugin.video.youtube", "url":"https://github.com/HenrikDK/youtube-xbmc-plugin.git"},
-            { "name":"plugin.video.vimeo", "url":"https://github.com/HenrikDK/vimeo-xbmc-plugin.git"},
-            { "name":"plugin.video.bliptv", "url":"https://github.com/HenrikDK/bliptv-xbmc-plugin.git"}
+            { "name":"script.common.plugin.cache", "url":"git@github.com:HenrikDK/xbmc-common-cache.git"},
+            { "name":"script.module.simple.downloader", "url":"git@github.com:HenrikDK/xbmc-simple-downloader.git" },
+            { "name":"script.module.parsedom", "url":"git@github.com:HenrikDK/xbmc-common-plugin-functions.git" },
+            { "name":"plugin.video.youtube", "url":"git@github.com:HenrikDK/youtube-xbmc-plugin.git" },
+            { "name":"plugin.video.vimeo", "url":"git@github.com:HenrikDK/vimeo-xbmc-plugin.git" },
+            { "name":"plugin.video.bliptv", "url":"git@github.com:HenrikDK/bliptv-xbmc-plugin.git" },
           ]
-
+#git@github.com:HenrikDK/youtube-xbmc-plugin.git
     xbmc_imports = [{"name":"xbmc.python", "eden_version": "2.0", "frodo_version":"2.1.0"}]
 
     repo_branch = "frodo"
@@ -37,7 +37,7 @@ class ReleaseManager:
         self.updates = self.pluginmanager.getPluginBranchesWhichNeedToBeUpdated(self.plugins, self.branches)
 
         self.UpdatePluginReleaseBranches()
-        self.PackageNewPluginVersionsAsZipFiles()
+        #self.PackageNewPluginVersionsAsZipFiles()
         self.template.createEmailFromTemplate(self.updates)
 
     def SetupWorkingFolders(self):
