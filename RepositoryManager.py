@@ -14,7 +14,7 @@ class RepositoryManager:
 
     def updateBranch(self, update):
         source = "../tmp/" + update["branch"] + "/" + update["plugin"]["name"]
-        command = "cd " + source + '; git add . && git commit -m "Jenkins commit" && git push'
+        command = "cd " + source + '; git add -u . && git commit -m "Jenkins commit" && git push'
         call(command, shell=True)
 
     def getBranchUpdateDetails(self, update):

@@ -1,0 +1,9 @@
+cd 
+mkdir .ssh
+cd .ssh
+ssh-keygen -t rsa -C "my@email.com" -f id_rsa-github 
+ssh -T git@github.com
+
+# Per Project. Path is repo specific, and not user specific.
+# Run command in repository.
+echo git config remote.origin.url git@github.com:HenrikDK/xbmc-plugin-release-script
