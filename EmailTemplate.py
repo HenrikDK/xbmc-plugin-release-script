@@ -19,7 +19,7 @@ class EmailTemplate:
         details = ""
         details += "*addon - " + update["plugin"]["name"] + "\r\n"
         details += "*version - " + update["plugin"]["new_" + update["branch"] + "_version"] + "\r\n"
-        details += "*url - " + update["plugin"]["url"] + "\r\n"
+        details += "*url - " + update["plugin"]["public"] + "\r\n"
         details += "*revision - " + update["revision"]
         details += "*branch - " + update["branch"] + "\r\n"
         details += "*xbmc version - " + update["branch"] + "\r\n"
