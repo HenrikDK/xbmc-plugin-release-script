@@ -10,7 +10,7 @@ class ReleaseManager:
             { "name":"plugin.video.vimeo", "url":"git@github.com:HenrikDK/vimeo-xbmc-plugin.git" },
             { "name":"plugin.video.bliptv", "url":"git@github.com:HenrikDK/bliptv-xbmc-plugin.git" },
           ]
-#git@github.com:HenrikDK/youtube-xbmc-plugin.git
+    
     xbmc_imports = [{"name":"xbmc.python", "eden_version": "2.0", "frodo_version":"2.1.0"}]
 
     repo_branch = "frodo"
