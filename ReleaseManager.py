@@ -41,6 +41,7 @@ class ReleaseManager:
         self.template.createEmailFromTemplate(self.updates)
 
     def SetupWorkingFolders(self):
+        print "cleaning folder structure"
         self.filesystem.deleteWorkingFolderRecursively()
         self.filesystem.createWorkingFolderStructure(self.branches)
 
